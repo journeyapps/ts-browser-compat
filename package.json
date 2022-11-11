@@ -1,0 +1,22 @@
+{
+  "name": "ts-browser-compat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "sample": "ts-node src/runner.ts sample",
+    "pretty": "prettier -w **/*.ts **/*.json **/*.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "prettier": "^2.7.1",
+    "typescript": "^4.8.4",
+    "ts-node": "^10.9.1"
+  },
+  "dependencies": {
+  }
+}
