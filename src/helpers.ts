@@ -1,7 +1,7 @@
-import * as ts from 'typescript'
-import {BrowserApiUsageSet} from "./BrowserApi";
-import {FileScanner} from "./FileScanner";
-import {CompatData} from "./CompatData";
+import * as ts from "typescript";
+import { BrowserApiUsageSet } from "./BrowserApi";
+import { FileScanner } from "./FileScanner";
+import { CompatData } from "./CompatData";
 
 export function scanProgram(program: ts.Program, compatData: CompatData) {
   const checker = program.getTypeChecker();

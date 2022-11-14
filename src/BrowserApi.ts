@@ -1,6 +1,6 @@
 import { CompatStatement, SimpleSupportStatement } from "./compat-data";
 import { SourceLocation } from "./SourceLocation";
-import {IgnoreEntry} from "./IgnoreEntry";
+import { IgnoreEntry } from "./IgnoreEntry";
 
 export class BrowserApi {
   type: "method" | "constructor" | "function" | "property" | "class" | "object";
@@ -139,7 +139,7 @@ export class BrowserApiUsageSet {
     for (let usage of this.allUsages()) {
       if (includeAll || usage.api.notSupported(browsers)) {
         if (filters) {
-          const filtered = filters.find(filter => filter.shouldIgnore(usage));
+          const filtered = filters.find((filter) => filter.shouldIgnore(usage));
           if (filtered) {
             continue;
           }

@@ -92,12 +92,10 @@ export class FileScanner {
       }
     }
 
-
     ts.forEachChild(node, (child) => {
       this.scanNode(child);
     });
   }
-
 
   scan() {
     this.scanNode(this.sourceFile);

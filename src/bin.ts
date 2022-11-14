@@ -25,7 +25,8 @@ const app = command({
       type: string,
       long: "config",
       short: "c",
-      description: "Config file",
+      description:
+        "Config file, defaults to browser-compat-checker.json if it exists",
       defaultValue(): string {
         return null;
       },
@@ -43,10 +44,16 @@ const app = command({
     skipTypeCheck: flag({
       long: "skip-type-check",
       short: "s",
-      description: "Skip typescript diagnostics",
+      description: "Skip TypeScript diagnostics",
+    }),
+    ignore: multioption({
+      type: array(string),
+      long: "ignore",
+      short: "i",
+      description: "APIs to ignore, e.g. Blob.text or Blob.*",
     }),
   },
-  handler: ({ configFile, browsers, path, skipTypeCheck }) => {
+  handler: ({ configFile, browsers, path, skipTypeCheck, ignore }) => {
     let config: Partial<RunConfig> = {};
     if (configFile != null) {
       config = JSON.parse(fs.readFileSync(configFile, "utf-8"));
@@ -67,6 +74,10 @@ const app = command({
     }
     if (!(config.path?.length > 0)) {
       config.path = ".";
+    }
+    if (ignore?.length > 0) {
+      config.ignore ??= [];
+      config.ignore.push(...ignore);
     }
     if (skipTypeCheck) {
       config.skipTypeCheck = true;

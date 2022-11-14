@@ -8,7 +8,10 @@ import * as path from "path";
 export default {
   coverageProvider: "v8",
   transform: {
-    '\\.[jt]sx?$': ['babel-jest', { configFile: path.join(__dirname, 'babel.config.js') }]
+    "\\.[jt]sx?$": [
+      "babel-jest",
+      { configFile: path.join(__dirname, "babel.config.js") },
+    ],
   },
-  rootDir: 'src'
+  rootDir: "src",
 };
