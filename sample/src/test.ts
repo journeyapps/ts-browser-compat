@@ -13,7 +13,6 @@ open("foo");
 new AbortController().abort();
 new window.AbortController().abort();
 console.log(navigator.doNotTrack);
-
 class AbortController {
   abort() {}
 }

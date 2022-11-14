@@ -1,6 +1,6 @@
-import { BrowserApi } from "./BrowserApi";
+import { ApiUsageFilter, BrowserApiUsage } from "./BrowserApi";
 
-export class IgnoreEntry {
+export class IgnoreEntry implements ApiUsageFilter {
   private readonly namespace: string;
   private readonly identifier: string | null;
 
@@ -10,7 +10,8 @@ export class IgnoreEntry {
     this.identifier = id;
   }
 
-  ignore(api: BrowserApi) {
+  shouldIgnore(usage: BrowserApiUsage) {
+    const api = usage.api;
     if (api.namespace != this.namespace) {
       return false;
     }

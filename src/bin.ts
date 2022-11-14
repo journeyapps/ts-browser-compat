@@ -1,7 +1,6 @@
 import ts = require("typescript");
-import { FileScanner } from "./scanner";
 import { CompatData } from "./CompatData";
-import { BrowserApiUsageSet, BrowserSupport } from "./BrowserApi";
+import { BrowserSupport } from "./BrowserApi";
 import * as fs from "fs";
 import { dirname } from "path";
 import {
@@ -17,8 +16,7 @@ import {
 import { RunConfig } from "./RunConfig";
 import { SourceLocation } from "./SourceLocation";
 import { IgnoreEntry } from "./IgnoreEntry";
-
-const data = require("@mdn/browser-compat-data");
+import { scanProgram } from "./helpers";
 
 const app = command({
   name: "browser-compat-checker",
@@ -161,24 +159,11 @@ function scanProject(config: {
     }
   }
 
-  const compatData = new CompatData(data);
+  const compatData = CompatData.default();
 
-  const checker = program.getTypeChecker();
+  const usages = scanProgram(program, compatData);
 
-  const usages = new BrowserApiUsageSet();
-
-  for (let file of program.getSourceFiles()) {
-    if (file.isDeclarationFile) {
-      continue;
-    }
-    const scanner = new FileScanner(file, program, checker, compatData, usages);
-    scanner.scan();
-  }
-
-  for (let usage of usages.filteredUsages(config.browsers)) {
-    if (config.ignores.find((entry) => entry.ignore(usage.api)) != null) {
-      continue;
-    }
+  for (let usage of usages.filteredUsages(config.browsers, config.ignores)) {
     failed = true;
     console.log(usage.toVersionString(Object.keys(config.browsers)));
   }

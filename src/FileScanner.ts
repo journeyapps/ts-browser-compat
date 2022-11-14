@@ -69,20 +69,21 @@ export class FileScanner {
   }
 
   private scanNode(node: ts.Node) {
+    if (ts.isTypeReferenceNode(node)) {
+      return;
+    }
+
     const symbol = this.checker.getSymbolAtLocation(node);
     this.checkSymbol(node, symbol);
 
     if (ts.isCallExpression(node)) {
       const type = this.checker.getTypeAtLocation(node.expression);
-      if (type == null) {
-        return;
-      }
-      if (type.isUnionOrIntersection()) {
+      if (type?.isUnionOrIntersection()) {
         for (let subtype of type.types) {
           const symbol = subtype.getSymbol();
           this.checkSymbol(node, symbol);
         }
-      } else {
+      } else if (type) {
         const typeSymbol = type.getSymbol();
 
         if (typeSymbol != symbol) {
@@ -90,18 +91,16 @@ export class FileScanner {
         }
       }
     }
-  }
 
-  private scanRecursiveNode(node: ts.Node) {
-    this.scanNode(node);
 
     ts.forEachChild(node, (child) => {
-      this.scanRecursiveNode(child);
+      this.scanNode(child);
     });
   }
 
+
   scan() {
-    this.scanRecursiveNode(this.sourceFile);
+    this.scanNode(this.sourceFile);
   }
 }
 

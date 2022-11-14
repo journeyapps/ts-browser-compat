@@ -5,6 +5,11 @@ export class CompatData {
   private dom: Record<string, Identifier>;
   private builtins: Record<string, Identifier>;
 
+  static default() {
+    const data = require("@mdn/browser-compat-data");
+    return new CompatData(data);
+  }
+
   constructor(private data: any) {
     this.dom = data.api;
     this.builtins = data.javascript.builtins;
