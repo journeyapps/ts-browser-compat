@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import ts = require("typescript");
 import { CompatData } from "./CompatData";
 import { BrowserSupport } from "./BrowserApi";

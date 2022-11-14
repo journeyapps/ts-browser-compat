@@ -1,9 +1,11 @@
 {
   "name": "@journeyapps/ts-browser-compat",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Check TypeScript projects for browser compatibility",
   "main": "dist/index.js",
-  "bin": "./dist/bin.js",
+  "bin": {
+    "ts-browser-compat": "./dist/bin.js"
+  },
   "scripts": {
     "sample": "ts-node src/bin.ts",
     "pretty": "prettier --write **/*.ts **/*.json **/*.js",
