@@ -26,4 +26,22 @@ export class SourceLocation {
   toString() {
     return `${this.filename}:${this.line}`;
   }
+
+  shouldIgnoreLine() {
+    const line = this.line - 1;
+    if (line <= 0) {
+      return false;
+    }
+    const lineStarts = this.sourceFile.getLineStarts();
+    const previousLineStart = lineStarts[line - 1];
+    const previousLineEnd = lineStarts[line];
+    const text = this.sourceFile.text.substring(
+      previousLineStart,
+      previousLineEnd
+    );
+    if (text.includes("@tsbc-ignore")) {
+      return true;
+    }
+    return false;
+  }
 }

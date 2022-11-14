@@ -17,10 +17,13 @@ export class FileScanner {
   }
 
   private record(node: ts.Node, api: BrowserApi) {
-    this.usage.record(
-      new SourceLocation(this.sourceFile, node.pos, this.program),
-      api
-    );
+    const start = node.getStart(this.sourceFile, false);
+    const loc = new SourceLocation(this.sourceFile, start, this.program);
+
+    if (loc.shouldIgnoreLine()) {
+      return;
+    }
+    this.usage.record(loc, api);
   }
 
   checkSymbol(node: ts.Node, symbol: ts.Symbol) {
@@ -77,15 +80,13 @@ export class FileScanner {
       if (type.isUnionOrIntersection()) {
         for (let subtype of type.types) {
           const symbol = subtype.getSymbol();
-          if (symbol) {
-            this.checkSymbol(node, symbol);
-          }
+          this.checkSymbol(node, symbol);
         }
       } else {
-        const symbol = type.getSymbol();
+        const typeSymbol = type.getSymbol();
 
-        if (symbol) {
-          this.checkSymbol(node, symbol);
+        if (typeSymbol != symbol) {
+          this.checkSymbol(node, typeSymbol);
         }
       }
     }

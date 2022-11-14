@@ -3,6 +3,7 @@ export {};
 const a = "".padStart(32);
 const t = new TextEncoder().encode("bar");
 const w = new ServiceWorker();
+// @tsbc-ignore
 w.postMessage();
 fetch();
 foobar();
