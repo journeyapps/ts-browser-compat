@@ -1,0 +1,9 @@
+{
+  "browsers": {
+    "safari_ios": "9",
+    "chrome": "55",
+    "firefox": "20"
+  },
+  "path": "sample"
+}
+

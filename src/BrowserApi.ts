@@ -1,5 +1,5 @@
 import { CompatStatement, SimpleSupportStatement } from "./compat-data";
-import * as ts from "typescript";
+import { SourceLocation } from "./SourceLocation";
 
 export class BrowserApi {
   type: "method" | "constructor" | "function" | "property" | "class" | "object";
@@ -34,7 +34,6 @@ export class BrowserApi {
       return null;
     }
 
-    // TODO: version_removed
     // https://github.com/saschanaz/types-web/blob/main/src/build/bcd/stable.ts
     let supportStatement: SimpleSupportStatement;
     if (Array.isArray(support)) {
@@ -50,13 +49,10 @@ export class BrowserApi {
     }
   }
 
-  getBrowserSupport() {
-    return {
-      text: `Chrome ${this.getBrowserVersion(
-        "chrome"
-      )} / iOS ${this.getBrowserVersion("safari_ios")}`,
-      chrome: parseInt(this.getBrowserVersion("chrome")),
-    };
+  toVersionString(browsers: string[]) {
+    return browsers
+      .map((browser) => `${browser} ${this.getBrowserVersion(browser) ?? "#"}`)
+      .join(", ");
   }
 
   notSupported(browsers: BrowserSupport) {
@@ -88,7 +84,13 @@ export class BrowserApiUsage {
   }
 
   toString() {
-    let base = `${this.api.description} - ${this.api.getBrowserSupport().text}`;
+    return this.api.description;
+  }
+
+  toVersionString(browsers: string[]) {
+    let base = `${this.api.description} - ${this.api.toVersionString(
+      browsers
+    )}`;
     let count = 0;
     const limit = 5;
     for (let loc of this.locations) {
@@ -128,9 +130,10 @@ export class BrowserApiUsageSet {
   }
 
   filteredUsages(browsers: BrowserSupport) {
+    const includeAll = Object.keys(browsers).length == 0;
     let results: BrowserApiUsage[] = [];
     for (let usage of this.usages.values()) {
-      if (usage.api.notSupported(browsers)) {
+      if (includeAll || usage.api.notSupported(browsers)) {
         results.push(usage);
       }
     }
@@ -138,40 +141,7 @@ export class BrowserApiUsageSet {
   }
 }
 
-export interface BrowserSupport {
-  /**
-   * Minimum version.
-   */
-  chrome?: string;
-  safari_ios?: string;
-}
-
-export class SourceLocation {
-  constructor(
-    private sourceFile: ts.SourceFile,
-    private node: ts.Node,
-    private program: ts.Program
-  ) {}
-
-  get filename() {
-    const file = this.sourceFile.fileName;
-    if (file.startsWith(this.program.getCurrentDirectory())) {
-      return file.substring(this.program.getCurrentDirectory().length + 1);
-    } else {
-      return file;
-    }
-  }
-
-  /**
-   * 1-based line
-   */
-  get line() {
-    return (
-      this.sourceFile.getLineAndCharacterOfPosition(this.node.pos).line + 1
-    );
-  }
-
-  toString() {
-    return `${this.filename}:${this.line}`;
-  }
-}
+/**
+ * Browser name => minimum version
+ */
+export type BrowserSupport = Record<string, string>;

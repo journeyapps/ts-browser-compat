@@ -1,6 +1,7 @@
 import * as ts from "typescript";
-import { BrowserApi, BrowserApiUsageSet, SourceLocation } from "./BrowserApi";
+import { BrowserApi, BrowserApiUsageSet } from "./BrowserApi";
 import { CompatData } from "./CompatData";
+import { SourceLocation } from "./SourceLocation";
 
 export class FileScanner {
   constructor(
@@ -17,13 +18,17 @@ export class FileScanner {
 
   private record(node: ts.Node, api: BrowserApi) {
     this.usage.record(
-      new SourceLocation(this.sourceFile, node, this.program),
+      new SourceLocation(this.sourceFile, node.pos, this.program),
       api
     );
   }
 
   checkSymbol(node: ts.Node, symbol: ts.Symbol) {
-    if (symbol == null || !isDomSymbol(symbol)) {
+    if (symbol == null) {
+      return;
+    }
+    const source = getSourceFile(symbol);
+    if (source == null || !this.program.isSourceFileDefaultLibrary(source)) {
       return;
     }
     const memberName = symbol?.getName();
@@ -102,18 +107,4 @@ export class FileScanner {
 function getSourceFile(symbol: ts.Symbol) {
   const declaration = symbol.valueDeclaration;
   return declaration?.getSourceFile();
-}
-
-function isDomSymbol(symbol: ts.Symbol) {
-  if (symbol == null) {
-    return false;
-  }
-  const sourceFile = getSourceFile(symbol);
-  if (sourceFile == null) {
-    return false;
-  }
-  if (!sourceFile.isDeclarationFile || !sourceFile.hasNoDefaultLib) {
-    return false;
-  }
-  return true;
 }
