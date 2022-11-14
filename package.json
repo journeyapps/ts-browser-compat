@@ -11,7 +11,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.20.2",
     "@babel/preset-env": "^7.20.2",
@@ -26,7 +26,8 @@
   },
   "dependencies": {
     "@mdn/browser-compat-data": "^5.2.15",
-    "cmd-ts": "^0.11.0"
+    "cmd-ts": "^0.11.0",
+    "strip-json-comments": "^3.1.1"
   },
   "peerDependencies": {
     "typescript": "^4.5.0"

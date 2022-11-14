@@ -17,6 +17,7 @@ import { RunConfig } from "./RunConfig";
 import { SourceLocation } from "./SourceLocation";
 import { IgnoreEntry } from "./IgnoreEntry";
 import { scanProgram } from "./helpers";
+import stripJsonComments = require("strip-json-comments");
 
 const app = command({
   name: "browser-compat-checker",
@@ -56,10 +57,14 @@ const app = command({
   handler: ({ configFile, browsers, path, skipTypeCheck, ignore }) => {
     let config: Partial<RunConfig> = {};
     if (configFile != null) {
-      config = JSON.parse(fs.readFileSync(configFile, "utf-8"));
+      config = JSON.parse(
+        stripJsonComments(fs.readFileSync(configFile, "utf-8"))
+      );
     } else if (fs.existsSync("browser-compat-checker.json")) {
       config = JSON.parse(
-        fs.readFileSync("browser-compat-checker.json", "utf-8")
+        stripJsonComments(
+          fs.readFileSync("browser-compat-checker.json", "utf-8")
+        )
       );
     }
     if (browsers?.length > 0) {
@@ -103,6 +108,18 @@ function program(config: RunConfig) {
     .concat(config.ignore ?? [])
     .map((spec) => new IgnoreEntry(spec));
 
+  const compatData = CompatData.default();
+  const browserList = compatData.getBrowserList();
+  for (let browser in config.browsers) {
+    if (!browserList.includes(browser)) {
+      throw new Error(
+        `Invalid browser "${browser}". Supported browsers: ${browserList.join(
+          ", "
+        )}`
+      );
+    }
+  }
+
   let anyFailed = false;
   for (let path of paths) {
     const { failed } = scanProject({
@@ -110,6 +127,7 @@ function program(config: RunConfig) {
       browsers: config.browsers,
       skipTypeCheck: config.skipTypeCheck,
       ignores,
+      compatData,
     });
     anyFailed ||= failed;
   }
@@ -123,6 +141,7 @@ function scanProject(config: {
   browsers: BrowserSupport;
   skipTypeCheck: boolean;
   ignores: IgnoreEntry[];
+  compatData: CompatData;
 }) {
   let path = config.path;
   let configPath: string;
@@ -170,9 +189,7 @@ function scanProject(config: {
     }
   }
 
-  const compatData = CompatData.default();
-
-  const usages = scanProgram(program, compatData);
+  const usages = scanProgram(program, config.compatData);
 
   for (let usage of usages.filteredUsages(config.browsers, config.ignores)) {
     failed = true;

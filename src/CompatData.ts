@@ -38,4 +38,8 @@ export class CompatData {
     }
     return null;
   }
+
+  getBrowserList() {
+    return Object.keys(this.data.browsers);
+  }
 }

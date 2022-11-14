@@ -4,6 +4,7 @@
     "chrome": "55",
     "firefox": "20"
   },
+  // Check the sample project by default
   "path": "sample"
 }
 
