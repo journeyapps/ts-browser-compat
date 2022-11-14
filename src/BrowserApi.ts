@@ -126,13 +126,16 @@ export class BrowserApiUsageSet {
   }
 
   allUsages() {
-    return [...this.usages.values()];
+    const results = [...this.usages.values()];
+    return results.sort((a, b) => {
+      return a.api.description.localeCompare(b.api.description);
+    });
   }
 
   filteredUsages(browsers: BrowserSupport) {
     const includeAll = Object.keys(browsers).length == 0;
     let results: BrowserApiUsage[] = [];
-    for (let usage of this.usages.values()) {
+    for (let usage of this.allUsages()) {
       if (includeAll || usage.api.notSupported(browsers)) {
         results.push(usage);
       }

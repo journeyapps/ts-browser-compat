@@ -16,6 +16,7 @@ import {
 } from "cmd-ts";
 import { RunConfig } from "./RunConfig";
 import { SourceLocation } from "./SourceLocation";
+import { IgnoreEntry } from "./IgnoreEntry";
 
 const data = require("@mdn/browser-compat-data");
 
@@ -88,12 +89,18 @@ function program(config: RunConfig) {
     paths = ["."];
   }
 
+  const ignores = []
+    .concat(config.polyfills ?? [])
+    .concat(config.ignore ?? [])
+    .map((spec) => new IgnoreEntry(spec));
+
   let anyFailed = false;
   for (let path of paths) {
     const { failed } = scanProject({
       path,
       browsers: config.browsers,
       skipTypeCheck: config.skipTypeCheck,
+      ignores,
     });
     anyFailed ||= failed;
   }
@@ -106,6 +113,7 @@ function scanProject(config: {
   path: string;
   browsers: BrowserSupport;
   skipTypeCheck: boolean;
+  ignores: IgnoreEntry[];
 }) {
   let path = config.path;
   let configPath: string;
@@ -168,6 +176,9 @@ function scanProject(config: {
   }
 
   for (let usage of usages.filteredUsages(config.browsers)) {
+    if (config.ignores.find((entry) => entry.ignore(usage.api)) != null) {
+      continue;
+    }
     failed = true;
     console.log(usage.toVersionString(Object.keys(config.browsers)));
   }
