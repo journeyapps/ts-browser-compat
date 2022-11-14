@@ -27,15 +27,16 @@ Blob.text - firefox 69, safari_ios 14
 
 # Limitations
 
-This project works by cross-referencing type references from DOM and built-in libraries in TypeScript, to the MDC browser
+This project works by cross-referencing type references from DOM and built-in libraries in TypeScript, to the MDN browser
 compatibility data.
 
  * No support for checking CSS.
  * No support for checking HTML.
  * No support for checking DOM events.
+ * Does not check for supported JavaScript syntax. Use `target` in `tsconfig.json` for this.
  * Limited support for checking JavaScript source files: It only works as well as the TypeScript compiler can infer the types.
  * Unpredictable results when a browser lists partial support for an API.
- * Potential for inaccuracies with matching the TypeScript definition to the compatibility data.
+ * Potential for inaccuracies with mapping the TypeScript definition to the compatibility data.
  * Does not automatically build or check referenced projects.
  * Does not check implementation of dependencies with type declarations.
  * Does not detect safe API usage using guard statements.
