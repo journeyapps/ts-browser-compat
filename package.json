@@ -6,8 +6,11 @@
   "bin": "./dist/bin.js",
   "scripts": {
     "sample": "ts-node src/bin.ts",
-    "pretty": "prettier -w **/*.ts **/*.json **/*.js",
-    "test": "jest --config tests/jest.config.ts"
+    "pretty": "prettier --write **/*.ts **/*.json **/*.js",
+    "pretty:check": "prettier --check **/*.ts **/*.json **/*.js",
+    "test": "jest --config tests/jest.config.ts",
+    "build": "tsc -b && tsc -b tests/tsconfig.json",
+    "clean": "tsc -b --clean && tsc -b --clean tests/tsconfig.json"
   },
   "keywords": [],
   "author": "Journey Mobile, Inc.",
