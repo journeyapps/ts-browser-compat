@@ -1,7 +1,7 @@
 {
-  "name": "ts-browser-compat",
+  "name": "@journeyapps/ts-browser-compat",
   "version": "0.1.0",
-  "description": "",
+  "description": "Check TypeScript projects for browser compatibility",
   "main": "dist/index.js",
   "bin": "./dist/bin.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "test": "jest --config tests/jest.config.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Journey Mobile, Inc.",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.20.2",

@@ -20,14 +20,14 @@ import { scanProgram } from "./helpers";
 import stripJsonComments = require("strip-json-comments");
 
 const app = command({
-  name: "browser-compat-checker",
+  name: "ts-browser-compat",
   args: {
     configFile: option({
       type: string,
       long: "config",
       short: "c",
       description:
-        "Config file, defaults to browser-compat-checker.json if it exists",
+        "Config file, defaults to ts-browser-compat.json if it exists",
       defaultValue(): string {
         return null;
       },
@@ -60,11 +60,9 @@ const app = command({
       config = JSON.parse(
         stripJsonComments(fs.readFileSync(configFile, "utf-8"))
       );
-    } else if (fs.existsSync("browser-compat-checker.json")) {
+    } else if (fs.existsSync("ts-browser-compat.json")) {
       config = JSON.parse(
-        stripJsonComments(
-          fs.readFileSync("browser-compat-checker.json", "utf-8")
-        )
+        stripJsonComments(fs.readFileSync("ts-browser-compat.json", "utf-8"))
       );
     }
     if (browsers?.length > 0) {

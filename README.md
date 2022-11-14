@@ -1,12 +1,12 @@
 # ts-browser-compat
 
-Checks TypeScript projects for browser compatibility, using [MDN browser-compat-data](https://github.com/mdn/browser-compat-data) -
+Check TypeScript projects for browser compatibility, using [MDN browser-compat-data](https://github.com/mdn/browser-compat-data) -
 the same data that powers [caniuse.com](https://caniuse.com/).
 
 # Simple Usage
 
 ```sh
-npx ts-browser-compat -b firefox:55 -b safari_ios:13
+npx @journeyapps/ts-browser-compat -b firefox:55 -b safari_ios:13
 ```
 
 Sample output:
@@ -42,7 +42,13 @@ compatibility data.
 
 # Usage in a project
 
-For a project, create a `browser-compat-checker.json` config file:
+For regular use, add as a dependency:
+
+```sh
+npm install --save-dev @journeyapps/ts-browser-compat
+```
+
+Then create a `ts-browser-compat.json` config file:
 
 ```json5
 {
