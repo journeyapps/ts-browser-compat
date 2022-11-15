@@ -3,6 +3,9 @@
 Check TypeScript projects for browser compatibility, using [MDN browser-compat-data](https://github.com/mdn/browser-compat-data) -
 the same data that powers [caniuse.com](https://caniuse.com/).
 
+Important note: This uses heuristics to report usage of APIs that may not be supported. The heuristics are not accurate in all cases -
+manually check the results.
+
 # Simple Usage
 
 ```sh
