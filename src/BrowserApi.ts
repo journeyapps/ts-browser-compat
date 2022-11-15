@@ -139,12 +139,16 @@ export class BrowserApiUsageSet {
     for (let usage of this.allUsages()) {
       if (includeAll || usage.api.notSupported(browsers)) {
         if (filters) {
-          const filtered = filters.find((filter) => filter.shouldIgnore(usage));
-          if (filtered) {
-            continue;
+          for (let filter of filters) {
+            usage = filter.filterUsage(usage);
+            if (usage == null) {
+              break;
+            }
           }
         }
-        results.push(usage);
+        if (usage) {
+          results.push(usage);
+        }
       }
     }
     return results;
@@ -152,7 +156,7 @@ export class BrowserApiUsageSet {
 }
 
 export interface ApiUsageFilter {
-  shouldIgnore(usage: BrowserApiUsage): boolean;
+  filterUsage(usage: BrowserApiUsage): BrowserApiUsage | null;
 }
 
 /**

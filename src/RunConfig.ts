@@ -5,3 +5,7 @@ export interface RunConfig {
   ignore?: string[];
   skipTypeCheck?: boolean;
 }
+
+export type IgnoreSpec =
+  | "string"
+  | { api?: string | string[]; path?: string | string[] };
