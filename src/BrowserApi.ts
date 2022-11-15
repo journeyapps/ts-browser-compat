@@ -8,7 +8,7 @@ export class BrowserApi {
   constructor(
     private compat: CompatStatement,
     public readonly namespace: string,
-    public readonly identifier: string
+    public readonly identifier?: string
   ) {
     if (compat == null) {
       throw new Error("compat data required");
@@ -27,6 +27,12 @@ export class BrowserApi {
 
   get id() {
     return this.description;
+  }
+
+  hasSameSupport(parentFeature: BrowserApi) {
+    const support = this.compat.support;
+    const parentSupport = parentFeature.compat.support;
+    return JSON.stringify(support) == JSON.stringify(parentSupport);
   }
 
   getBrowserVersion(browser: string): string | null {

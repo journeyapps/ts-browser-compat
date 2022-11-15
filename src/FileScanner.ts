@@ -17,6 +17,14 @@ export class FileScanner {
   }
 
   private record(node: ts.Node, api: BrowserApi) {
+    if (api.identifier) {
+      const parent = this.compatData.getData(api.namespace, null);
+      if (parent && api.hasSameSupport(parent)) {
+        // Parent API has the same browser support as the child property - only report the parent API.
+        return;
+      }
+    }
+
     const start = node.getStart(this.sourceFile, false);
     const loc = new SourceLocation(this.sourceFile, start, this.program);
 

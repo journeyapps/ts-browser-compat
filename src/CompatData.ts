@@ -29,14 +29,24 @@ export class CompatData {
     return null;
   }
 
-  getData(namespace: string, identifier: string): BrowserApi | null {
-    const def1 = this.builtins[namespace]?.[identifier]?.__compat;
-    const def2 = this.dom[namespace]?.[identifier]?.__compat;
-    const def = def1 ?? def2;
-    if (def) {
-      return new BrowserApi(def, namespace, identifier);
+  getData(namespace: string, identifier?: string): BrowserApi | null {
+    if (identifier) {
+      const def1 = this.builtins[namespace]?.[identifier]?.__compat;
+      const def2 = this.dom[namespace]?.[identifier]?.__compat;
+      const def = def1 ?? def2;
+      if (def) {
+        return new BrowserApi(def, namespace, identifier);
+      }
+      return null;
+    } else {
+      const def1 = this.builtins[namespace]?.__compat;
+      const def2 = this.dom[namespace]?.__compat;
+      const def = def1 ?? def2;
+      if (def) {
+        return new BrowserApi(def, namespace, null);
+      }
+      return null;
     }
-    return null;
   }
 
   getBrowserList() {

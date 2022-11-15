@@ -94,4 +94,10 @@ Window.navigator - chrome 1, firefox 1, safari 1
     expect(usages).toEqual(``);
   });
 
+  it('should ignore child properties where parent spec has the same support', function() {
+    const usages = usagesAsString(`new AbortController().signal`);
+    expect(usages).toEqual(`AbortController - chrome 66, firefox 57, safari 12.1
+  test.ts:1`);
+  });
+
 });
