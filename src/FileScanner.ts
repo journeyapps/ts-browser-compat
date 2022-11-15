@@ -68,26 +68,82 @@ export class FileScanner {
     return null;
   }
 
+  private isExistanceCheck(node: ts.Node) {
+    while (
+      node.parent &&
+      ts.isPropertyAccessExpression(node.parent) &&
+      node.parent.name == node
+    ) {
+      node = node.parent;
+    }
+
+    if (
+      node.parent &&
+      ts.isPropertyAccessExpression(node.parent) &&
+      node.parent.expression == node
+    ) {
+      // <some.chain>?.property
+      return (
+        (node.parent.flags & ts.NodeFlags.OptionalChain) ==
+        ts.NodeFlags.OptionalChain
+      );
+    }
+    if (node.parent == null) {
+      return false;
+    }
+
+    if (ts.isTypeOfExpression(node.parent)) {
+      // typeof <some.property.chain>
+      return true;
+    } else if (
+      ts.isIfStatement(node.parent) &&
+      node.parent.expression == node
+    ) {
+      // if (<some.property.chain>)
+      return true;
+    } else if (
+      ts.isBinaryExpression(node.parent) &&
+      node.parent.operatorToken.kind == ts.SyntaxKind.AmpersandAmpersandToken
+    ) {
+      // <some.property.chain> && somethingelse
+      return true;
+    } else if (
+      ts.isPrefixUnaryExpression(node.parent) &&
+      node.parent.operator == ts.SyntaxKind.ExclamationToken
+    ) {
+      // !<some.property.chain>
+      return true;
+    }
+
+    return false;
+  }
+
   private scanNode(node: ts.Node) {
     if (ts.isTypeReferenceNode(node)) {
+      // Ignore types - it does not affect the final build
       return;
     }
 
-    const symbol = this.checker.getSymbolAtLocation(node);
-    this.checkSymbol(node, symbol);
+    if (this.isExistanceCheck(node)) {
+      // Ignore typeof <property>
+    } else {
+      const symbol = this.checker.getSymbolAtLocation(node);
 
-    if (ts.isCallExpression(node)) {
-      const type = this.checker.getTypeAtLocation(node.expression);
-      if (type?.isUnionOrIntersection()) {
-        for (let subtype of type.types) {
-          const symbol = subtype.getSymbol();
-          this.checkSymbol(node, symbol);
-        }
-      } else if (type) {
-        const typeSymbol = type.getSymbol();
+      this.checkSymbol(node, symbol);
 
-        if (typeSymbol != symbol) {
-          this.checkSymbol(node, typeSymbol);
+      if (ts.isCallExpression(node)) {
+        const type = this.checker.getTypeAtLocation(node.expression);
+        if (type?.isUnionOrIntersection()) {
+          for (let subtype of type.types) {
+            const symbol = subtype.getSymbol();
+            this.checkSymbol(node, symbol);
+          }
+        } else if (type) {
+          const typeSymbol = type.getSymbol();
+
+          if (typeSymbol != symbol) {
+            this.checkSymbol(node, typeSymbol);
+          }
         }
       }
     }

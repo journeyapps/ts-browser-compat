@@ -55,4 +55,43 @@ Performance.measure - chrome 28, firefox 41, safari 11
 Window.navigator - chrome 1, firefox 1, safari 1
   test.ts:1`);
   });
+
+  it("should ignore typeof checks", function () {
+    const usages = usagesAsString(`if (typeof navigator.doNotTrack != 'undefined') {}`);
+    expect(usages).toEqual(`Window.navigator - chrome 1, firefox 1, safari 1
+  test.ts:1`);
+  });
+
+  it("should ignore existence checks", function () {
+    const usages = usagesAsString(`if (navigator.doNotTrack) {}`);
+    expect(usages).toEqual(`Window.navigator - chrome 1, firefox 1, safari 1
+  test.ts:1`);
+  })
+
+  it("should ignore optional chaining", function () {
+    const usages = usagesAsString(`if (navigator?.doNotTrack) {}`);
+    expect(usages).toEqual(``);
+  })
+
+  it("should ignore optional chaining with longer chains", function () {
+    const usages = usagesAsString(`if (navigator?.permissions?.query) {}`);
+    expect(usages).toEqual(``);
+  })
+
+  it("should include final properties", function () {
+    const usages = usagesAsString(`const track = navigator?.doNotTrack`);
+    expect(usages).toEqual(`Navigator.doNotTrack - chrome 23, firefox 9, safari #
+  test.ts:1`);
+  })
+
+  it("should ignore && checks", function () {
+    const usages = usagesAsString(`if (navigator?.doNotTrack && false) {}`);
+    expect(usages).toEqual(``);
+  });
+
+  it("should ignore ! checks", function () {
+    const usages = usagesAsString(`if (!navigator?.doNotTrack) {}`);
+    expect(usages).toEqual(``);
+  });
+
 });
