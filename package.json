@@ -1,6 +1,6 @@
 {
   "name": "@journeyapps/ts-browser-compat",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Check TypeScript projects for browser compatibility",
   "repository": "github:journeyapps/ts-browser-compat",
   "main": "dist/index.js",
